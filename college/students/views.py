@@ -1,17 +1,46 @@
 from .models import StudentData
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import viewsets
-from .serializers import StudentSerializer
+from .serializers import StudentDataSerializer
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
-class StudentModelViewset(viewsets.ModelViewSet):
-    queryset = StudentData.objects.all()
-    serializer_class = StudentSerializer
+class StudentAPIView(APIView):
 
+    def post(self, request):
+        serializer = StudentDataSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request, pk=None):
+        if pk:
+            student = get_object_or_404(StudentData, pk=pk)
+            serializer = StudentDataSerializer(student)
+            return Response(serializer.data)
+        else:
+            students = StudentData.objects.all()
+            serializer = StudentDataSerializer(students, many=True)
+            return Response(serializer.data)
 
-@api_view(["GET"])
-def get_list(request):
-    print(StudentData.objects.all())
-    return Response({})
+    def put(self, request, pk=None):
+        student = get_object_or_404(StudentData, pk=pk)
+        serializer = StudentDataSerializer(student, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request, pk=None):
+        student = get_object_or_404(StudentData, pk=pk)
+        serializer = StudentDataSerializer(student, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk=None):
+        student = get_object_or_404(StudentData, pk=pk)
+        student.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
