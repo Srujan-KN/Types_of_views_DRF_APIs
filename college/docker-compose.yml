@@ -10,4 +10,16 @@ services:
     image: college-backend:0.0.1
     container_name: college-backend
     command: python manage.py runserver 0.0.0.0:8000
-    
+  
+  postgres-db:
+    image: "postgres:latest"
+    container_name: college-db
+    environment:
+      - POSTGRES_DB=college
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+    volumes:
+      - ./data:/var/lib/postrgresql/data
+    ports:
+      - "5434:5432"
+

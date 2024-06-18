@@ -82,6 +82,20 @@ DATABASES = {
     }
 }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'college',
+        'USER': 'admin',
+        'PASSWORD': 'admin123',
+        'HOST': 'postgres-db',
+        'PORT': '5432',
+        "OPTIONS": {
+            "options": f"-c search_path=college"
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
