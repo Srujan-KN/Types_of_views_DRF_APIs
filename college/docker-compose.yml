@@ -1,16 +1,7 @@
 version: '3.8'
 
 services:
-  backend:
-    build: .
-    volumes:
-      - .:/backend
-    ports:
-      - "8000:8000"
-    image: college-backend:0.0.1
-    container_name: college-backend
-    command: python manage.py runserver 0.0.0.0:8000
-  
+    
   postgres-db:
     image: "postgres:latest"
     container_name: college-db
@@ -22,4 +13,16 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - "5434:5432"
+    
+  backend:
+    build: .
+    volumes:
+      - .:/backend
+    ports:
+      - "8000:8000"
+    image: college-backend:0.0.1
+    container_name: college-backend
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - postgres-db
 
