@@ -57,12 +57,10 @@ def student_data_api(request, pk=None):
     '''
     if request.method == 'GET':
         if pk:
-            try:
-                student = StudentData.objects.get(srn=pk)
-                serializer = StudentDataSerializer(student)
-                return Response(serializer.data)
-            except StudentData.DoesNotExist:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+            student = get_object_or_404(StudentData, pk=pk)
+            serializer = StudentDataSerializer(student)
+            return Response(serializer.data)
+
         else:
             students = StudentData.objects.all()
             serializer = StudentDataSerializer(students, many=True)
@@ -76,11 +74,7 @@ def student_data_api(request, pk=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method in ['PUT', 'PATCH']:
-        try:
-            student = StudentData.objects.get(srn=pk)
-        except StudentData.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
+        student = get_object_or_404(StudentData, pk=pk)
         if request.method == 'PUT':
             serializer = StudentDataSerializer(student, data=request.data)
         elif request.method == 'PATCH':
@@ -92,10 +86,7 @@ def student_data_api(request, pk=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        try:
-            student = StudentData.objects.get(srn=pk)
-        except StudentData.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        student = get_object_or_404(StudentData, pk=pk)
 
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
